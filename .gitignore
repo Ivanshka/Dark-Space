@@ -33,10 +33,9 @@
 
 # мои исключения
 .vs
-Graphics
-Debug
-Release
-ReleaseWithoutConsole
+Sender Old
+Bing Wallpaper/bin
+Bing Wallpaper/obj
 *.pdb
 *.idb
 *.log

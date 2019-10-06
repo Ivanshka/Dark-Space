@@ -1,3 +1,4 @@
+
 #pragma once
 #define BOT_COUNT 10
 #define BOT_HEIGHT 64
@@ -7,3 +8,7 @@
 
 // счетчик убийств в текущей миссии
 extern short KILLED_IN_MISSION;
+// состояние игры
+extern bool PAUSE;
+// сохраненные координаты мыши. сохраняются при выходе в меню
+//extern LPPOINT SAVED_MOUSE_POINT;

@@ -16,16 +16,16 @@
 using namespace std;
 using namespace sf;
 
-/*int FPS = 0;
+int FPS = 0;
 void fpsc()
 {
 	while (true)
 	{
 		sleep(milliseconds(1000));
-		cout << "FPS = " << FPS << " KILLED = " << KILLED_IN_MISSION << endl;
+		cout << "FPS = " << FPS << endl;
 		FPS = 0;
 	}
-}*/
+}
 
 int main(int argc, char *argv[])
 {
@@ -49,9 +49,11 @@ int main(int argc, char *argv[])
 	// повторна€ инициализаци€ генератора случайных чисел
 	srand(time(0));
 	// игровые объекты:
-	// текстуры:
+	// текстуры и спрайты:
 	Texture tBullet; tBullet.loadFromFile("images/fire.png");
 	Texture tBot; tBot.loadFromFile("images/enemy.png");
+	Texture tMenu; tMenu.loadFromFile("images/menu.png");
+	Sprite sMenu; sMenu.setTexture(tMenu);
 	// объекты:
 	Player player(100, 100, "images/player.png");
 	Bot * bots = new Bot[BOT_COUNT];
@@ -77,9 +79,12 @@ int main(int argc, char *argv[])
 	ostringstream sKILLED_IN_MISSION;
 
 	// поток дл€ вывода fps 
-	//thread thr(fpsc);
+	thread thr(fpsc);
 	// врем€
 	float elapsed;
+
+	// координаты мыши дл€ возврата в игру из меню
+	Vector2i SAVED_MOUSE_POINT;
 
 	while (win->isOpen())
 	{
@@ -89,7 +94,6 @@ int main(int argc, char *argv[])
 
 		// положение мыши в окне
 		Vector2f MousePos = win->mapPixelToCoords(Mouse::getPosition(*win));
-
 		Event event;
 		while (win->pollEvent(event))
 		{
@@ -111,30 +115,46 @@ int main(int argc, char *argv[])
 					}
 				}
 			}
+			if (event.type == Event::KeyReleased)
+			{
+				if (event.key.code == Keyboard::Escape)
+				{
+					PAUSE = !PAUSE;
+					if (PAUSE) {
+						SAVED_MOUSE_POINT = Mouse::getPosition();
+						win->setMouseCursorVisible(true);
+					}
+					else {
+						Mouse::setPosition(SAVED_MOUSE_POINT);
+						win->setMouseCursorVisible(false);
+					}
+				}
+			}
 		}
 
 		win->clear();
 
 		// обновление
-		if (player.Hp > 0)
-		{
-			health.setSize(Vector2f(player.Hp * 2, 30));
-			if (player.Hp > 66)
-				health.setFillColor(Color::Green);
-			else if (player.Hp > 33)
-				health.setFillColor(Color::Yellow);
-			else health.setFillColor(Color::Red);
-			player.Update(MousePos, bots, elapsed);
-			for (int i = 0; i < BOT_COUNT; i++)
-				bots[i].Update(elapsed);
-			for (int i = 0; i < BULLET_COUNT; i++)
-				bullets[i].Update(bots, elapsed);
-		}
-		else
-		{
-			health.setSize(Vector2f(0, 30));
-			win->setMouseCursorVisible(true);
-		}
+		if (!PAUSE)
+			if (player.Hp > 0)
+			{
+				health.setSize(Vector2f(player.Hp * 2, 30));
+				if (player.Hp > 66)
+					health.setFillColor(Color::Green);
+				else if (player.Hp > 33)
+					health.setFillColor(Color::Yellow);
+				else health.setFillColor(Color::Red);
+				player.Update(MousePos, bots, elapsed);
+				for (int i = 0; i < BOT_COUNT; i++)
+					bots[i].Update(elapsed);
+				for (int i = 0; i < BULLET_COUNT; i++)
+					bullets[i].Update(bots, elapsed);
+			}
+			else
+			{
+				health.setSize(Vector2f(0, 30));
+				win->setMouseCursorVisible(true);
+			}
 
 		// строка дл€ вывода кол-ва убитых
 		sKILLED_IN_MISSION.str(""); // очистка текстового потока
@@ -151,9 +171,12 @@ int main(int argc, char *argv[])
 		win->draw(sInfopanel); // инфопанель
 		win->draw(health); // полоса хп
 		win->draw(killed); // число убитых
+		if (PAUSE) {
+			win->draw(sMenu);
+		}
 		win->display();
 
-		//FPS++;
+		FPS++;
 	}
 	return 0;
 }
