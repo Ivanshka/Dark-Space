@@ -33,12 +33,10 @@
 
 # мои исключения
 .vs
-Sender Old
-Bing Wallpaper/bin
-Bing Wallpaper/obj
-*.pdb
-*.idb
-*.log
-*.tlog
-*.res
-*.lastbuildstate
+Debug
+Release
+ReleaseWithoutConsole
+Dark Space/Debug
+Dark Space/Release
+Dark Space/ReleaseWithoutConsole
+*.aps
