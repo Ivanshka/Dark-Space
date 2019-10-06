@@ -6,12 +6,11 @@
 #include <string>
 #include <sstream>
 
-#include <SFML/Graphics.hpp>
-
 #include "Vars.h"
 #include "Bot.h"
 #include "Player.h"
 #include "Bullet.h"
+#include "Button.h"
 
 using namespace std;
 using namespace sf;
@@ -22,7 +21,7 @@ void fpsc()
 	while (true)
 	{
 		sleep(milliseconds(1000));
-		cout << "FPS = " << FPS << endl;
+		cout << "FPS = " << FPS << endl << "STATE = " << STATE << endl;
 		FPS = 0;
 	}
 }
@@ -30,31 +29,35 @@ void fpsc()
 int main(int argc, char *argv[])
 {
 	setlocale(LC_ALL, "Rus");
+
 	RenderWindow * win;
 	if (argc > 1)
 		win = new RenderWindow(VideoMode(800, 600), "Dark Space", Style::Fullscreen);
 	else
 		win = new RenderWindow(VideoMode(800, 600), "Dark Space");
 
-	win->setMouseCursorVisible(false);
+	//win->setMouseCursorVisible(false);
 
-	// фон
-	Texture tBackground;
-	tBackground.loadFromFile("images/space.png");
-	Sprite sBackground;
-	sBackground.setTexture(tBackground);
+	// ПОДГОТОВКА
 
 	// часы
 	Clock clock;
-	// повторная инициализация генератора случайных чисел
+	// инициализация генератора случайных чисел
 	srand(time(0));
-	// игровые объекты:
+
+	// вспомогательные материалы:
 	// текстуры и спрайты:
-	Texture tBullet; tBullet.loadFromFile("images/fire.png");
-	Texture tBot; tBot.loadFromFile("images/enemy.png");
-	Texture tMenu; tMenu.loadFromFile("images/menu.png");
+	Texture tBackground; tBackground.loadFromFile("images/space.png"); // фон главного меню
+	Sprite sBackground; sBackground.setTexture(tBackground);
+	Texture tBullet; tBullet.loadFromFile("images/fire.png"); // атака
+	Texture tBot; tBot.loadFromFile("images/enemy.png"); // враги
+	Texture tMenu; tMenu.loadFromFile("images/menu.png"); // фон меню паузы
 	Sprite sMenu; sMenu.setTexture(tMenu);
-	// объекты:
+	Texture tButtonPlay; tButtonPlay.loadFromFile("images/buttons/buttonPlay.png"); // кнопка "играть"
+	Texture tButtonSettings; tButtonSettings.loadFromFile("images/buttons/buttonSettings.png"); // кнопка "настройки"
+	Texture tButtonExit; tButtonExit.loadFromFile("images/buttons/buttonExit.png"); // кнопка "выход"
+
+	// инициализация объектов:
 	Player player(100, 100, "images/player.png");
 	Bot * bots = new Bot[BOT_COUNT];
 	Bullet * bullets = new Bullet[BULLET_COUNT];
@@ -62,7 +65,7 @@ int main(int argc, char *argv[])
 		bots[i] = Bot(0 + rand() % 704, -(64 + rand() % 800), 0.16f, 100., &tBot);
 	for (int i = 0; i < BULLET_COUNT; i++)
 		bullets[i] = Bullet(-8, -600, 0.64f, &tBullet);
-	// счетчик
+	// инициализация счетчика
 	int bulIterator = 0;
 
 	// инфопанель, здоровье и кол-во убитых
@@ -86,6 +89,21 @@ int main(int argc, char *argv[])
 	// координаты мыши для возврата в игру из меню
 	Vector2i SAVED_MOUSE_POINT;
 
+	// кнопки менюшек
+	// главное меню
+	Button bPlay(100, 100, &tButtonPlay, ClickPlay);
+	Button bSettings(100, 180, &tButtonSettings, ClickSettings);
+	Button bGameExit(100, 260, &tButtonExit, ClickGameExit);
+	// недоделаный вариант с программным текстом
+	/*Text tPlay("ИГРАТЬ", font, 20); tPlay.setPosition()
+	Text tSettings("НАСТРОЙКИ", font, 20);
+	Text tExit("ВЫХОД", font, 20);
+	{
+		Color clr(102, 102, 238);
+		tPlay.setFillColor(clr);    tSettings.setFillColor(clr);    tExit.setFillColor(clr);
+		tPlay.setOutlineColor(clr); tSettings.setOutlineColor(clr); tExit.setOutlineColor(clr);
+	}*/
+
 	while (win->isOpen())
 	{
 		elapsed = clock.getElapsedTime().asMicroseconds();
@@ -105,28 +123,47 @@ int main(int argc, char *argv[])
 			{
 				if (event.mouseButton.button == Mouse::Button::Left)
 				{
-					if (player.Hp > 0)
+					switch (STATE)
 					{
-						bullets[bulIterator].Damage = 35 + rand() % 65;
-						bullets[bulIterator].sprite.setPosition(bullets[bulIterator].X = MousePos.x - 4, bullets[bulIterator].Y = MousePos.y - 70);
-						bulIterator++;
-						if (bulIterator == BULLET_COUNT)
-							bulIterator = 0;
+					case MAIN_MENU:
+						bPlay.Update(MousePos, win);
+						bSettings.Update(MousePos, win);
+						bGameExit.Update(MousePos, win);
+						break;
+					case PLAYING:
+						if (player.Hp > 0)
+						{
+							bullets[bulIterator].Damage = 35 + rand() % 65;
+							bullets[bulIterator].sprite.setPosition(bullets[bulIterator].X = MousePos.x - 4, bullets[bulIterator].Y = MousePos.y - 70);
+							bulIterator++;
+							if (bulIterator == BULLET_COUNT)
+								bulIterator = 0;
+						}
+						break;
 					}
+					
 				}
 			}
 			if (event.type == Event::KeyReleased)
 			{
 				if (event.key.code == Keyboard::Escape)
 				{
-					PAUSE = !PAUSE;
-					if (PAUSE) {
+					cout << "ESCAPE!!!" << endl;
+					switch (STATE) {
+					case PLAYING:
+						STATE = PAUSE;
 						SAVED_MOUSE_POINT = Mouse::getPosition();
 						win->setMouseCursorVisible(true);
-					}
-					else {
-						Mouse::setPosition(SAVED_MOUSE_POINT);
+						break;
+					case PAUSE:
+						STATE = PLAYING;
 						win->setMouseCursorVisible(false);
+						Mouse::setPosition(SAVED_MOUSE_POINT);
+						break;
+					case SETTINGS:
+						STATE = MAIN_MENU;
+					default:
+						break;
 					}
 				}
 			}
@@ -135,7 +172,7 @@ int main(int argc, char *argv[])
 		win->clear();
 
 		// обновление
-		if (!PAUSE)
+		if (STATE == PLAYING)
 			if (player.Hp > 0)
 			{
 				health.setSize(Vector2f(player.Hp * 2, 30));
@@ -163,19 +200,31 @@ int main(int argc, char *argv[])
 
 		// отрисовка
 		win->draw(sBackground); // фон
-		for (int i = 0; i < BOT_COUNT; i++)
-			win->draw(bots[i].sprite); // боты
-		win->draw(player.sprite); // игрок
-		for (int i = 0; i < BULLET_COUNT; i++)
-			win->draw(bullets[i].sprite); // лазеры
-		win->draw(sInfopanel); // инфопанель
-		win->draw(health); // полоса хп
-		win->draw(killed); // число убитых
-		if (PAUSE) {
+		switch (STATE)
+		{
+		case MAIN_MENU: // ГЛАВНОЕ МЕНЮ
+			win->draw(bPlay.Rect); 
+			win->draw(bSettings.Rect);
+			win->draw(bGameExit.Rect);
+			break;
+		case PLAYING: // ИГРА
+			for (int i = 0; i < BOT_COUNT; i++) // боты
+				win->draw(bots[i].sprite);
+			win->draw(player.sprite); // игрок
+			for (int i = 0; i < BULLET_COUNT; i++) // лазеры
+				win->draw(bullets[i].sprite);
+			win->draw(sInfopanel); // инфопанель
+			win->draw(health); // полоса хп
+			win->draw(killed); // число убитых
+			break;
+		case PAUSE: // ПАУЗА ИГРЫ
 			win->draw(sMenu);
+			break;
+		case SETTINGS:
+			break;
 		}
+		
 		win->display();
-
 		FPS++;
 	}
 	return 0;
