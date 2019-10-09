@@ -1,6 +1,13 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+
+#include "Bot.h"
+#include "Player.h"
+#include "Bullet.h"
+#include "Button.h"
+#include "CheckBox.h"
 
 #define BOT_COUNT 10
 #define BOT_HEIGHT 64
@@ -10,6 +17,12 @@
 
 // ОКНО ИГРЫ. РАСШАРЕНО ДЛЯ ДОСТУПА ИЗ ЛЮБОЙ ТОЧКИ
 extern sf::RenderWindow * win;
+
+// музыка
+extern sf::Music * BackgroundMusic;
+// звуки
+extern sf::SoundBuffer * SoundBuffer;
+extern sf::Sound * Sound;
 
 // счетчик убийств в текущей миссии
 extern short KILLED_IN_MISSION;
@@ -23,3 +36,11 @@ extern GAME_STATE STATE;
 void ClickPlay(sf::RenderWindow * win);
 void ClickSettings(sf::RenderWindow * win);
 void ClickGameExit(sf::RenderWindow * win);
+// НАСТРОЙКИ:
+void ClickMusic();
+void ClickSound();
+void ClickFullScreen();
+// ПАУЗА
+void ClickContinue(sf::RenderWindow * win);
+void ClickSaveGame(sf::RenderWindow * win);
+void ClickExit(sf::RenderWindow * win);

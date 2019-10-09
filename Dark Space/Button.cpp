@@ -4,7 +4,6 @@
 // размеры: 180 х 50
 Button::Button(int x, int y, Texture * background, void (*func)(RenderWindow * win))
 {
-	Enabled = true;
 	Rect.setPosition(x, y);
 	Rect.setTexture(background);
 	Rect.setSize(Vector2f(180, 50));

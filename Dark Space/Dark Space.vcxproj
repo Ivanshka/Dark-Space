@@ -200,6 +200,7 @@
     <ClCompile Include="Bot.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="CheckBox.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Start.cpp" />
     <ClCompile Include="Vars.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Bot.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="CheckBox.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Vars.h" />

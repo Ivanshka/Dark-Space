@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <list>
@@ -7,10 +9,6 @@
 #include <sstream>
 
 #include "Vars.h"
-#include "Bot.h"
-#include "Player.h"
-#include "Bullet.h"
-#include "Button.h"
 
 using namespace std;
 using namespace sf;
@@ -21,7 +19,7 @@ void fpsc()
 	while (true)
 	{
 		sleep(milliseconds(1000));
-		cout << "FPS = " << FPS << endl << "STATE = " << STATE << endl;
+		cout << "FPS = " << FPS << endl;
 		FPS = 0;
 	}
 }
@@ -53,9 +51,11 @@ int main(int argc, char *argv[])
 	Texture tBot; tBot.loadFromFile("images/enemy.png"); // враги
 	Texture tMenu; tMenu.loadFromFile("images/menu.png"); // фон меню паузы
 	Sprite sMenu; sMenu.setTexture(tMenu);
-	Texture tButtonPlay; tButtonPlay.loadFromFile("images/buttons/buttonPlay.png"); // кнопка "играть"
-	Texture tButtonSettings; tButtonSettings.loadFromFile("images/buttons/buttonSettings.png"); // кнопка "настройки"
-	Texture tButtonExit; tButtonExit.loadFromFile("images/buttons/buttonExit.png"); // кнопка "выход"
+	Texture tButtonPlay; tButtonPlay.loadFromFile("images/gui/buttonPlay.png"); // кнопка "играть"
+	Texture tButtonSettings; tButtonSettings.loadFromFile("images/gui/buttonSettings.png"); // кнопка "настройки"
+	Texture tButtonExit; tButtonExit.loadFromFile("images/gui/buttonExit.png"); // кнопка "выход"
+	Texture tDisCheckBox; tDisCheckBox.loadFromFile("images/gui/DisabledCheckBox.png");
+	Texture tEnCheckBox; tEnCheckBox.loadFromFile("images/gui/EnabledCheckBox.png");
 
 	// инициализаци€ объектов:
 	Player player(100, 100, "images/player.png");
@@ -89,11 +89,28 @@ int main(int argc, char *argv[])
 	// координаты мыши дл€ возврата в игру из меню
 	Vector2i SAVED_MOUSE_POINT;
 
+	// музыка. из-з невозможности засунуть музыку в кучу делаем костыль через расшаренность указателем
+	Music Music;
+	BackgroundMusic = &Music; // указатель mMainMenu extern'овский
+	if (!Music.openFromFile("sounds/menu.ogg"))
+		cout << "Not found: sounds/menu.ogg";
+	else
+		Music.play();
+	Music.setLoop(true);
+	//звуки
+	sf::SoundBuffer HpSBuffer;
+	if (!HpSBuffer.loadFromFile("sounds/hp.ogg"))
+		cout << "Not found: sounds/hp.ogg";
+	sf::Sound HpSound;
+	HpSound.setBuffer(HpSBuffer);
+
 	// кнопки менюшек
 	// главное меню
 	Button bPlay(100, 100, &tButtonPlay, ClickPlay);
 	Button bSettings(100, 180, &tButtonSettings, ClickSettings);
 	Button bGameExit(100, 260, &tButtonExit, ClickGameExit);
+	// настройки
+	CheckBox cbMusic(100, 100, &tEnCheckBox, &tDisCheckBox, ClickMusic);
 	// недоделаный вариант с программным текстом
 	/*Text tPlay("»√–ј“№", font, 20); tPlay.setPosition()
 	Text tSettings("Ќј—“–ќ… »", font, 20);
@@ -131,6 +148,7 @@ int main(int argc, char *argv[])
 						bGameExit.Update(MousePos, win);
 						break;
 					case PLAYING:
+						HpSound.play();
 						if (player.Hp > 0)
 						{
 							bullets[bulIterator].Damage = 35 + rand() % 65;
@@ -140,6 +158,8 @@ int main(int argc, char *argv[])
 								bulIterator = 0;
 						}
 						break;
+					case SETTINGS:
+						cbMusic.Update(MousePos, win);
 					}
 					
 				}
@@ -148,7 +168,6 @@ int main(int argc, char *argv[])
 			{
 				if (event.key.code == Keyboard::Escape)
 				{
-					cout << "ESCAPE!!!" << endl;
 					switch (STATE) {
 					case PLAYING:
 						STATE = PAUSE;
@@ -173,6 +192,7 @@ int main(int argc, char *argv[])
 
 		// обновление
 		if (STATE == PLAYING)
+		{
 			if (player.Hp > 0)
 			{
 				health.setSize(Vector2f(player.Hp * 2, 30));
@@ -193,10 +213,11 @@ int main(int argc, char *argv[])
 				win->setMouseCursorVisible(true);
 			}
 
-		// строка дл€ вывода кол-ва убитых
-		sKILLED_IN_MISSION.str(""); // очистка текстового потока
-		sKILLED_IN_MISSION << KILLED_IN_MISSION << endl;
-		killed.setString(sKILLED_IN_MISSION.str());
+			// строка дл€ вывода кол-ва убитых
+			sKILLED_IN_MISSION.str(""); // очистка текстового потока
+			sKILLED_IN_MISSION << KILLED_IN_MISSION << endl;
+			killed.setString(sKILLED_IN_MISSION.str());
+		}
 
 		// отрисовка
 		win->draw(sBackground); // фон
@@ -221,6 +242,7 @@ int main(int argc, char *argv[])
 			win->draw(sMenu);
 			break;
 		case SETTINGS:
+			win->draw(cbMusic.Rect);
 			break;
 		}
 		
