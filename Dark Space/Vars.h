@@ -15,6 +15,13 @@
 #define BULLET_COUNT 10
 #define FRAME_MULTIPLIER 0.025
 
+//// Настройки игры
+//bool bSettingsSounds;
+//bool bSettingsMusic;
+//bool bSettingsFullScreen;
+// загружает настройки
+void LoadSettings();
+
 // ОКНО ИГРЫ. РАСШАРЕНО ДЛЯ ДОСТУПА ИЗ ЛЮБОЙ ТОЧКИ
 extern sf::RenderWindow * win;
 
@@ -26,8 +33,10 @@ extern sf::Sound * Sound;
 
 // счетчик убийств в текущей миссии
 extern short KILLED_IN_MISSION;
+
 // перечисление состояний игры
-enum GAME_STATE { MAIN_MENU, PLAYING, PAUSE, SETTINGS };
+enum class GAME_STATE { MAIN_MENU, PLAYING, PAUSE, SETTINGS };
+
 // текущее состояние игры (экраны)
 extern GAME_STATE STATE;
 
@@ -40,6 +49,7 @@ void ClickGameExit(sf::RenderWindow * win);
 void ClickMusic();
 void ClickSound();
 void ClickFullScreen();
+void ClickSettingsExit(sf::RenderWindow* win);
 // ПАУЗА
 void ClickContinue(sf::RenderWindow * win);
 void ClickSaveGame(sf::RenderWindow * win);

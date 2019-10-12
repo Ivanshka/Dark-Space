@@ -1,12 +1,13 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include <vector>
 #include <list>
 #include <thread>
 #include <ctime>
 #include <string>
-#include <sstream>
 
 #include "Vars.h"
 
@@ -14,12 +15,20 @@ using namespace std;
 using namespace sf;
 
 int FPS = 0;
+int circles = 0;
+int AllFPS = 0;
 void fpsc()
 {
+	std::ofstream out;          // поток для записи
+	out.open("logFPS.log");
 	while (true)
 	{
 		sleep(milliseconds(1000));
-		cout << "FPS = " << FPS << endl;
+		circles++;
+		AllFPS += FPS;
+		//cout << "FPS = " << FPS << endl;
+		cout << AllFPS << endl;
+		out << "FPS = " << FPS << ", средний = " << (AllFPS / circles) << ", полный = " << AllFPS<< endl;
 		FPS = 0;
 	}
 }
@@ -41,7 +50,7 @@ int main(int argc, char *argv[])
 	// часы
 	Clock clock;
 	// инициализация генератора случайных чисел
-	srand(time(0));
+	srand((unsigned int)time(0));
 
 	// вспомогательные материалы:
 	// текстуры и спрайты:
@@ -51,6 +60,7 @@ int main(int argc, char *argv[])
 	Texture tBot; tBot.loadFromFile("images/enemy.png"); // враги
 	Texture tMenu; tMenu.loadFromFile("images/menu.png"); // фон меню паузы
 	Sprite sMenu; sMenu.setTexture(tMenu);
+	//Texture tButton; tButton.loadFromFile("images/gui/button.png"); // кнопка
 	Texture tButtonPlay; tButtonPlay.loadFromFile("images/gui/buttonPlay.png"); // кнопка "играть"
 	Texture tButtonSettings; tButtonSettings.loadFromFile("images/gui/buttonSettings.png"); // кнопка "настройки"
 	Texture tButtonExit; tButtonExit.loadFromFile("images/gui/buttonExit.png"); // кнопка "выход"
@@ -89,28 +99,44 @@ int main(int argc, char *argv[])
 	// координаты мыши для возврата в игру из меню
 	Vector2i SAVED_MOUSE_POINT;
 
-	// музыка. из-з невозможности засунуть музыку в кучу делаем костыль через расшаренность указателем
-	Music Music;
-	BackgroundMusic = &Music; // указатель mMainMenu extern'овский
-	if (!Music.openFromFile("sounds/menu.ogg"))
-		cout << "Not found: sounds/menu.ogg";
-	else
-		Music.play();
-	Music.setLoop(true);
+	// музыка
+	BackgroundMusic = new Music(); // указатель mMainMenu extern'овский
+	if (BackgroundMusic->openFromFile("sounds/menu.ogg"))
+		BackgroundMusic->play();
+	BackgroundMusic->setLoop(true);
 	//звуки
 	sf::SoundBuffer HpSBuffer;
-	if (!HpSBuffer.loadFromFile("sounds/hp.ogg"))
-		cout << "Not found: sounds/hp.ogg";
+	HpSBuffer.loadFromFile("sounds/hp.ogg");
 	sf::Sound HpSound;
 	HpSound.setBuffer(HpSBuffer);
 
-	// кнопки менюшек
+	// КНОПКИ МЕНЮШЕК
 	// главное меню
-	Button bPlay(100, 100, &tButtonPlay, ClickPlay);
-	Button bSettings(100, 180, &tButtonSettings, ClickSettings);
-	Button bGameExit(100, 260, &tButtonExit, ClickGameExit);
+	Button bPlay(100, 195, &tButtonPlay, ClickPlay);
+	Button bSettings(100, 275, &tButtonSettings, ClickSettings);
+	Button bGameExit(100, 355, &tButtonExit, ClickGameExit);
+	//Text tPlay(L"ИГРАТЬ", font, 27); tPlay.setPosition(149, 202);
+	//Text tSettings(L"НАСТРОЙКИ", font, 27); tSettings.setPosition(1, 1);
+	//Text tGameExit(L"ВЫХОД", font, 27); tGameExit.setPosition(1, 1);
 	// настройки
-	CheckBox cbMusic(100, 100, &tEnCheckBox, &tDisCheckBox, ClickMusic);
+	CheckBox cbSounds(585, 205, &tEnCheckBox, &tDisCheckBox, ClickSound, true);
+	CheckBox cbMusic(585, 275, &tEnCheckBox, &tDisCheckBox, ClickMusic, true);
+	CheckBox cbFullScreen(585, 345, &tEnCheckBox, &tDisCheckBox, ClickFullScreen, true);
+	Button bSettingsExit(310, 422, &tButtonExit, ClickSettingsExit);
+	Text tSound(L"ЗВУКИ", font, 50); tSound.setPosition(165, 205);
+	Text tMusic(L"МУЗЫКА", font, 50); tMusic.setPosition(165, 275);
+	Text tFullScreen(L"ПОЛНЫЙ ЭКРАН", font, 50); tFullScreen.setPosition(165, 345);
+	{
+		Color clr(102, 102, 238);
+		// главное меню
+		//tPlay.setFillColor(clr); tPlay.setOutlineColor(clr);
+		//tSettings.setFillColor(clr); tSettings.setOutlineColor(clr);
+		//tGameExit.setFillColor(clr); tGameExit.setOutlineColor(clr);
+		// настройки
+		tMusic.setFillColor(clr); tMusic.setOutlineColor(clr);
+		tSound.setFillColor(clr); tSound.setOutlineColor(clr);
+		tFullScreen.setFillColor(clr); tFullScreen.setOutlineColor(clr);
+	}
 	// недоделаный вариант с программным текстом
 	/*Text tPlay("ИГРАТЬ", font, 20); tPlay.setPosition()
 	Text tSettings("НАСТРОЙКИ", font, 20);
@@ -120,15 +146,15 @@ int main(int argc, char *argv[])
 		tPlay.setFillColor(clr);    tSettings.setFillColor(clr);    tExit.setFillColor(clr);
 		tPlay.setOutlineColor(clr); tSettings.setOutlineColor(clr); tExit.setOutlineColor(clr);
 	}*/
-
 	while (win->isOpen())
 	{
 		elapsed = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
-		elapsed /= 1600; //регулировка скорости игры
+		elapsed *= 0.000625; //регулировка скорости игры: elapsed /= 1600; 0.000625 = 1 / 1600 
 
 		// положение мыши в окне
 		Vector2f MousePos = win->mapPixelToCoords(Mouse::getPosition(*win));
+		// события
 		Event event;
 		while (win->pollEvent(event))
 		{
@@ -142,12 +168,14 @@ int main(int argc, char *argv[])
 				{
 					switch (STATE)
 					{
-					case MAIN_MENU:
+					// ГЛАВНОЕ МЕНЮ
+					case GAME_STATE::MAIN_MENU:
 						bPlay.Update(MousePos, win);
 						bSettings.Update(MousePos, win);
 						bGameExit.Update(MousePos, win);
 						break;
-					case PLAYING:
+					// ИГРА
+					case GAME_STATE::PLAYING:
 						HpSound.play();
 						if (player.Hp > 0)
 						{
@@ -158,8 +186,13 @@ int main(int argc, char *argv[])
 								bulIterator = 0;
 						}
 						break;
-					case SETTINGS:
+					// НАСТРОЙКИ
+					case GAME_STATE::SETTINGS:
 						cbMusic.Update(MousePos, win);
+						cbSounds.Update(MousePos, win);
+						cbFullScreen.Update(MousePos, win);
+						bSettingsExit.Update(MousePos, win);
+						break;
 					}
 					
 				}
@@ -169,18 +202,18 @@ int main(int argc, char *argv[])
 				if (event.key.code == Keyboard::Escape)
 				{
 					switch (STATE) {
-					case PLAYING:
-						STATE = PAUSE;
+					case GAME_STATE::PLAYING:
+						STATE = GAME_STATE::PAUSE;
 						SAVED_MOUSE_POINT = Mouse::getPosition();
 						win->setMouseCursorVisible(true);
 						break;
-					case PAUSE:
-						STATE = PLAYING;
+					case GAME_STATE::PAUSE:
+						STATE = GAME_STATE::PLAYING;
 						win->setMouseCursorVisible(false);
 						Mouse::setPosition(SAVED_MOUSE_POINT);
 						break;
-					case SETTINGS:
-						STATE = MAIN_MENU;
+					case GAME_STATE::SETTINGS:
+						STATE = GAME_STATE::MAIN_MENU;
 					default:
 						break;
 					}
@@ -191,7 +224,7 @@ int main(int argc, char *argv[])
 		win->clear();
 
 		// обновление
-		if (STATE == PLAYING)
+		if (STATE == GAME_STATE::PLAYING)
 		{
 			if (player.Hp > 0)
 			{
@@ -223,12 +256,15 @@ int main(int argc, char *argv[])
 		win->draw(sBackground); // фон
 		switch (STATE)
 		{
-		case MAIN_MENU: // ГЛАВНОЕ МЕНЮ
-			win->draw(bPlay.Rect); 
+		// ГЛАВНОЕ МЕНЮ
+		case GAME_STATE::MAIN_MENU:
+			win->draw(bPlay.Rect);
+			//win->draw(tPlay);
 			win->draw(bSettings.Rect);
 			win->draw(bGameExit.Rect);
 			break;
-		case PLAYING: // ИГРА
+		// ИГРА
+		case GAME_STATE::PLAYING:
 			for (int i = 0; i < BOT_COUNT; i++) // боты
 				win->draw(bots[i].sprite);
 			win->draw(player.sprite); // игрок
@@ -238,11 +274,19 @@ int main(int argc, char *argv[])
 			win->draw(health); // полоса хп
 			win->draw(killed); // число убитых
 			break;
-		case PAUSE: // ПАУЗА ИГРЫ
+		// ПАУЗА
+		case GAME_STATE::PAUSE:
 			win->draw(sMenu);
 			break;
-		case SETTINGS:
+		// НАСТРОЙКИ
+		case GAME_STATE::SETTINGS:
 			win->draw(cbMusic.Rect);
+			win->draw(cbSounds.Rect);
+			win->draw(cbFullScreen.Rect);
+			win->draw(tMusic);
+			win->draw(tSound);
+			win->draw(tFullScreen);
+			win->draw(bSettingsExit.Rect);
 			break;
 		}
 		
