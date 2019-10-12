@@ -60,10 +60,10 @@ int main(int argc, char *argv[])
 	Texture tBot; tBot.loadFromFile("images/enemy.png"); // âðàãè
 	Texture tMenu; tMenu.loadFromFile("images/menu.png"); // ôîí ìåíþ ïàóçû
 	Sprite sMenu; sMenu.setTexture(tMenu);
-	//Texture tButton; tButton.loadFromFile("images/gui/button.png"); // êíîïêà
-	Texture tButtonPlay; tButtonPlay.loadFromFile("images/gui/buttonPlay.png"); // êíîïêà "èãðàòü"
-	Texture tButtonSettings; tButtonSettings.loadFromFile("images/gui/buttonSettings.png"); // êíîïêà "íàñòðîéêè"
-	Texture tButtonExit; tButtonExit.loadFromFile("images/gui/buttonExit.png"); // êíîïêà "âûõîä"
+	Texture tButton; tButton.loadFromFile("images/gui/button.png"); // êíîïêà
+	//Texture tButtonPlay; tButtonPlay.loadFromFile("images/gui/buttonPlay.png"); // êíîïêà "èãðàòü"
+	//Texture tButtonSettings; tButtonSettings.loadFromFile("images/gui/buttonSettings.png"); // êíîïêà "íàñòðîéêè"
+	//Texture tButtonExit; tButtonExit.loadFromFile("images/gui/buttonExit.png"); // êíîïêà "âûõîä"
 	Texture tDisCheckBox; tDisCheckBox.loadFromFile("images/gui/DisabledCheckBox.png");
 	Texture tEnCheckBox; tEnCheckBox.loadFromFile("images/gui/EnabledCheckBox.png");
 
@@ -112,30 +112,33 @@ int main(int argc, char *argv[])
 
 	// ÊÍÎÏÊÈ ÌÅÍÞØÅÊ
 	// ãëàâíîå ìåíþ
-	Button bPlay(100, 195, &tButtonPlay, ClickPlay);
-	Button bSettings(100, 275, &tButtonSettings, ClickSettings);
-	Button bGameExit(100, 355, &tButtonExit, ClickGameExit);
-	//Text tPlay(L"ÈÃÐÀÒÜ", font, 27); tPlay.setPosition(149, 202);
-	//Text tSettings(L"ÍÀÑÒÐÎÉÊÈ", font, 27); tSettings.setPosition(1, 1);
-	//Text tGameExit(L"ÂÛÕÎÄ", font, 27); tGameExit.setPosition(1, 1);
+	Button bPlay(100, 195, &tButton, ClickPlay);
+	Button bSettings(100, 275, &tButton, ClickSettings);
+	Button bGameExit(100, 355, &tButton, ClickGameExit);
+	Text tPlay(L"ÈÃÐÀÒÜ", font, 27); tPlay.setPosition(149, 202);
+	Text tSettings(L"ÍÀÑÒÐÎÉÊÈ", font, 27); tSettings.setPosition(121, 282);
+	Text tGameExit(L"ÂÛÕÎÄ", font, 27); tGameExit.setPosition(148, 362);
 	// íàñòðîéêè
 	CheckBox cbSounds(585, 205, &tEnCheckBox, &tDisCheckBox, ClickSound, true);
 	CheckBox cbMusic(585, 275, &tEnCheckBox, &tDisCheckBox, ClickMusic, true);
 	CheckBox cbFullScreen(585, 345, &tEnCheckBox, &tDisCheckBox, ClickFullScreen, true);
-	Button bSettingsExit(310, 422, &tButtonExit, ClickSettingsExit);
+	Button bSettingsExit(310, 422, &tButton, ClickSettingsExit);
 	Text tSound(L"ÇÂÓÊÈ", font, 50); tSound.setPosition(165, 205);
 	Text tMusic(L"ÌÓÇÛÊÀ", font, 50); tMusic.setPosition(165, 275);
 	Text tFullScreen(L"ÏÎËÍÛÉ ÝÊÐÀÍ", font, 50); tFullScreen.setPosition(165, 345);
+	Text tSettingsExit(L"ÍÀÇÀÄ", font, 27); tSettingsExit.setPosition(358, 429);
 	{
-		Color clr(102, 102, 238);
+		//Color clr(102, 102, 238);
+		Color clr(21, 202, 212);
 		// ãëàâíîå ìåíþ
-		//tPlay.setFillColor(clr); tPlay.setOutlineColor(clr);
-		//tSettings.setFillColor(clr); tSettings.setOutlineColor(clr);
-		//tGameExit.setFillColor(clr); tGameExit.setOutlineColor(clr);
+		tPlay.setFillColor(clr); tPlay.setOutlineColor(clr);
+		tSettings.setFillColor(clr); tSettings.setOutlineColor(clr);
+		tGameExit.setFillColor(clr); tGameExit.setOutlineColor(clr);
 		// íàñòðîéêè
 		tMusic.setFillColor(clr); tMusic.setOutlineColor(clr);
 		tSound.setFillColor(clr); tSound.setOutlineColor(clr);
 		tFullScreen.setFillColor(clr); tFullScreen.setOutlineColor(clr);
+		tSettingsExit.setFillColor(clr); tSettingsExit.setOutlineColor(clr);
 	}
 	// íåäîäåëàíûé âàðèàíò ñ ïðîãðàììíûì òåêñòîì
 	/*Text tPlay("ÈÃÐÀÒÜ", font, 20); tPlay.setPosition()
@@ -212,10 +215,6 @@ int main(int argc, char *argv[])
 						win->setMouseCursorVisible(false);
 						Mouse::setPosition(SAVED_MOUSE_POINT);
 						break;
-					case GAME_STATE::SETTINGS:
-						STATE = GAME_STATE::MAIN_MENU;
-					default:
-						break;
 					}
 				}
 			}
@@ -259,9 +258,11 @@ int main(int argc, char *argv[])
 		// ÃËÀÂÍÎÅ ÌÅÍÞ
 		case GAME_STATE::MAIN_MENU:
 			win->draw(bPlay.Rect);
-			//win->draw(tPlay);
+			win->draw(tPlay);
 			win->draw(bSettings.Rect);
+			win->draw(tSettings);
 			win->draw(bGameExit.Rect);
+			win->draw(tGameExit);
 			break;
 		// ÈÃÐÀ
 		case GAME_STATE::PLAYING:
@@ -287,6 +288,7 @@ int main(int argc, char *argv[])
 			win->draw(tSound);
 			win->draw(tFullScreen);
 			win->draw(bSettingsExit.Rect);
+			win->draw(tSettingsExit);
 			break;
 		}
 		
