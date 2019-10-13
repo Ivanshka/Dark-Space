@@ -42,6 +42,10 @@ int main(int argc, char *argv[])
 	else
 		win = new RenderWindow(VideoMode(800, 600), "Dark Space");
 
+	// иконка окна
+	Image icon; icon.loadFromFile("images/icon.png");
+	win->setIcon(16, 16, icon.getPixelsPtr());
+
 	// ПОДГОТОВКА
 
 	// часы
