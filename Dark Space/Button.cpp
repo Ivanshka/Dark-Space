@@ -2,7 +2,7 @@
 
 
 // размеры: 180 х 50
-Button::Button(int x, int y, Texture * background, void (*func)(RenderWindow * win))
+Button::Button(int x, int y, Texture * background, void (*func)())
 {
 	Rect.setPosition(x, y);
 	Rect.setTexture(background);
@@ -14,10 +14,10 @@ Button::~Button()
 {
 }
 
-void Button::Update(Vector2f MousePos, RenderWindow * win)
+void Button::Update(Vector2f MousePos)
 {
 	Vector2f rect = Rect.getPosition();
 	if (MousePos.x > rect.x && MousePos.x < rect.x + 180)
 		if (MousePos.y > rect.y && MousePos.y < rect.y + 50)
-			Click(win);
+			Click();
 }

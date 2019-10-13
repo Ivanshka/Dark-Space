@@ -22,7 +22,7 @@ CheckBox::~CheckBox()
 }
 
 // размер: 50 х 50
-void CheckBox::Update(Vector2f MousePos, RenderWindow * win)
+void CheckBox::Update(Vector2f MousePos)
 {
 	Vector2f rect = Rect.getPosition();
 	if (MousePos.x > rect.x && MousePos.x < rect.x + 50)

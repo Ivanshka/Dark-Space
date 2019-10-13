@@ -17,6 +17,6 @@ public:
 	void Update(Vector2f MousePos, Bot * bots, float time);
 	FloatRect GetRect();
 	float frame;
-	short Hp;
+	int Hp;
 };
 

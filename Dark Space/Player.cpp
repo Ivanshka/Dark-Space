@@ -33,6 +33,7 @@ void Player::Update(Vector2f MousePos, Bot * bots, float time)
 		if (GetRect().intersects(bots[i].GetRect()))
 		{
 			Hp -= 20 + rand() % 30;
+			KILLED_IN_MISSION++;
 			bots[i].ResetBot();
 		}
 }
