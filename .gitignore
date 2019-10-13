@@ -40,3 +40,4 @@ Dark Space/Debug
 Dark Space/Release
 Dark Space/ReleaseWithoutConsole
 *.aps
+*.log

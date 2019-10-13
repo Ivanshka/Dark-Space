@@ -41,6 +41,7 @@ void Bot::ResetBot()
 {
 	Hp = MaxHp;
 	sprite.setPosition(X = rand() % 704, Y = -(BOT_HEIGHT + rand() % 768));
+	KILLED_IN_MISSION++;
 }
 
 FloatRect Bot::GetRect()

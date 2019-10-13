@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <stdio.h> // äëÿ printf
 #include <sstream>
 #include <fstream>
 #include <vector>
@@ -26,9 +27,8 @@ void fpsOut()
 		sleep(milliseconds(1000));
 		circles++;
 		AllFPS += FPS;
-		cout << "FPS = " << FPS << "Hp = " << player->Hp << endl;
-		//cout << AllFPS << endl;
-		out << "FPS = " << FPS << ", ñðåäíèé = " << (AllFPS / circles) << ", ïîëíûé = " << AllFPS<< endl;
+		printf("Circle: %3i   FPS: %4i   aFPS: %4i   fFPS: %6i\n", circles, FPS, (AllFPS / circles), AllFPS);
+		out << "Circle = " << circles << "FPS = " << FPS << ", average = " << (AllFPS / circles) << ", full = " << AllFPS<< endl;
 		FPS = 0;
 	}
 }
@@ -127,8 +127,8 @@ int main(int argc, char *argv[])
 	Text tSaveGame(L"ÑÎÕÐÀÍÈÒÜ", font, 27); tSaveGame.setPosition(332, 282);
 	Text tMainMenu(L"ÃËÀÂÍÎÅ ÌÅÍÞ", font, 25); tMainMenu.setPosition(314, 361);
 	// ïðîèãðûø
-	Button bPlayAgain(310, 195, &tButton, ClickPlay);
-	Text tPlayAgain(L"ÐÅÑÒÀÐÒ", font, 27); tPlayAgain.setPosition(352, 202);
+	Button bRestart(310, 195, &tButton, ClickPlay);
+	Text tRestart(L"ÐÅÑÒÀÐÒ", font, 27); tRestart.setPosition(352, 202);
 
 
 	// èçìåíåíèå öâåòà òåêñòà
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
 				{
 					if (event.mouseButton.button == Mouse::Button::Left)
 					{
-						bContinue.Update(MousePos);
+						bRestart.Update(MousePos);
 						bSaveGame.Update(MousePos);
 						bMainMenu.Update(MousePos);
 					}
@@ -285,10 +285,10 @@ int main(int argc, char *argv[])
 			win->draw(sBackground); // ôîí
 			win->draw(sMenu);
 
-			win->draw(bPlayAgain.Rect);
+			win->draw(bRestart.Rect);
 			win->draw(bSaveGame.Rect);
 			win->draw(bMainMenu.Rect);
-			win->draw(tPlayAgain);
+			win->draw(tRestart);
 			win->draw(tSaveGame);
 			win->draw(tMainMenu);
 			win->display();

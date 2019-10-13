@@ -16,7 +16,8 @@ public:
 	~Player();
 	void Update(Vector2f MousePos, Bot * bots, float time);
 	FloatRect GetRect();
-	float frame;
 	int Hp;
+private:
+	float frame;
 };
 

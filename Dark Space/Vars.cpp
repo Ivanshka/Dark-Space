@@ -23,12 +23,11 @@ sf::SoundBuffer * SoundBuffer = nullptr;
 sf::Sound * Sound = nullptr;
 
 void LoadSettings() {
-
+	cout << "Here must be loading of settings!\n";
 }
 
 // Проверка существования файла
-bool FileIsExist(std::string filePath)
-{
+bool FileIsExist(std::string filePath) {
 	bool isExist = false;
 	std::ifstream fin(filePath.c_str());
 
@@ -75,35 +74,33 @@ void ClickMusic() {
 
 // звуки
 void ClickSound() {
-
+	cout << "Sound control is in developing!\n";
 }
 
 // полноэкранный режим
 void ClickFullScreen() {
-
+	cout << "Fullscreen control is in developing!\n";
 }
 
 // выход из настроек
-void ClickSettingsExit()
-{
+void ClickSettingsExit() {
 	// тут сохраняем настройки
+	cout << "Here must be settings saving!\n";
 	STATE = GAME_STATE::MAIN_MENU;
 }
 
 // ПАУЗА
 // продолжить
-void ClickContinue()
-{
+void ClickContinue() {
+	win->setMouseCursorVisible(false);
 	STATE = GAME_STATE::PLAYING;
 }
 // сохранить
-void ClickSaveGame()
-{
-	cout << "SaveGame is pressed!";
+void ClickSaveGame() {
+	cout << "Game saving is in developing!\n";
 }
 // главное меню
-void ClickMainMenu()
-{
+void ClickMainMenu() {
 	(*BackgroundMusic).openFromFile("sounds/menu.ogg");
 	(*BackgroundMusic).play();
 	STATE = GAME_STATE::MAIN_MENU;

@@ -1,9 +1,35 @@
-FPS = 484, средний = 484, полный = 484
-FPS = 407, средний = 445, полный = 890
-FPS = 428, средний = 439, полный = 1317
-FPS = 447, средний = 440, полный = 1763
-FPS = 509, средний = 454, полный = 2271
-FPS = 609, средний = 479, полный = 2879
-FPS = 642, средний = 502, полный = 3520
-FPS = 594, средний = 514, полный = 4113
-FPS = 278, средний = 487, полный = 4391
+Circle = 1FPS = 483, average = 478, full = 478
+Circle = 2FPS = 503, average = 490, full = 980
+Circle = 3FPS = 507, average = 495, full = 1486
+Circle = 4FPS = 491, average = 494, full = 1976
+Circle = 5FPS = 501, average = 495, full = 2477
+Circle = 6FPS = 251, average = 454, full = 2728
+Circle = 7FPS = 534, average = 466, full = 3262
+Circle = 8FPS = 525, average = 473, full = 3787
+Circle = 9FPS = 549, average = 481, full = 4336
+Circle = 10FPS = 549, average = 488, full = 4885
+Circle = 11FPS = 538, average = 493, full = 5423
+Circle = 12FPS = 520, average = 495, full = 5942
+Circle = 13FPS = 489, average = 494, full = 6431
+Circle = 14FPS = 519, average = 496, full = 6949
+Circle = 15FPS = 493, average = 496, full = 7442
+Circle = 16FPS = 559, average = 500, full = 8001
+Circle = 17FPS = 405, average = 494, full = 8406
+Circle = 18FPS = 347, average = 486, full = 8753
+Circle = 19FPS = 357, average = 479, full = 9110
+Circle = 20FPS = 346, average = 472, full = 9455
+Circle = 21FPS = 349, average = 466, full = 9803
+Circle = 22FPS = 347, average = 461, full = 10149
+Circle = 23FPS = 351, average = 456, full = 10500
+Circle = 24FPS = 351, average = 452, full = 10851
+Circle = 25FPS = 347, average = 447, full = 11198
+Circle = 26FPS = 347, average = 444, full = 11545
+Circle = 27FPS = 349, average = 440, full = 11894
+Circle = 28FPS = 348, average = 437, full = 12241
+Circle = 29FPS = 348, average = 434, full = 12589
+Circle = 30FPS = 364, average = 431, full = 12953
+Circle = 31FPS = 365, average = 429, full = 13310
+Circle = 32FPS = 341, average = 426, full = 13651
+Circle = 33FPS = 492, average = 428, full = 14143
+Circle = 34FPS = 615, average = 434, full = 14758
+Circle = 35FPS = 309, average = 430, full = 15067
