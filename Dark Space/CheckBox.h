@@ -10,7 +10,7 @@ public:
 	// спрайт
 	RectangleShape Rect;
 	// Функция проверки нажатия кнопки. Вставляется в событие клика мыши.
-	void Update(Vector2f MousePos);
+	void CheckOnClick(Vector2f MousePos);
 	CheckBox(int x, int y, Texture * EnabledBackground, Texture * DisabledBackground, void(*func)(), bool enabled);
 	~CheckBox();
 private:

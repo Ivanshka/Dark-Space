@@ -20,14 +20,17 @@
 // Кадровый множитель. Регулирует скорость анимации.
 #define FRAME_MULTIPLIER 0.025
 
-
 // Окно игры
 extern sf::RenderWindow* win;
 
 // Настройки игры
-//bool bSettingsSounds;
-//bool bSettingsMusic;
-//bool bSettingsFullScreen;
+
+// Параметр звука
+extern bool bSettingsSounds;
+// Параметр музыки
+extern bool bSettingsMusic;
+// Параметр полноэкраного режима
+extern bool bSettingsFullScreen;
 // Загрузка настроек
 void LoadSettings();
 
@@ -42,7 +45,7 @@ extern sf::SoundBuffer* SoundBuffer;
 extern short KILLED_IN_MISSION;
 
 // Состояния игры
-enum class GAME_STATE { MAIN_MENU, PLAYING, PAUSE, SETTINGS, GAME_OVER };
+enum class GAME_STATE { MAIN_MENU, PLAYING, PAUSE, SETTINGS, GAME_OVER, READING };
 
 // текущее состояние игры (экраны)
 extern GAME_STATE STATE;
@@ -57,6 +60,9 @@ extern Bot* bots;
 extern Bullet* bullets;
 
 // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ: ФУНКЦИИ РАБОТЫ КНОПОК
+
+// Проверка на существование файла
+bool FileIsExist(string path);
 
 // ГЛАВНОЕ МЕНЮ:
 

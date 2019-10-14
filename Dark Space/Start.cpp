@@ -37,7 +37,10 @@ int main(int argc, char *argv[])
 {
 	//setlocale(LC_ALL, "Rus");
 
-	if (argc > 1)
+	// çàðóçêà íàñòðîåê
+	LoadSettings();
+
+	if (bSettingsFullScreen)
 		win = new RenderWindow(VideoMode(800, 600), "Dark Space", Style::Fullscreen);
 	else
 		win = new RenderWindow(VideoMode(800, 600), "Dark Space");
@@ -64,6 +67,7 @@ int main(int argc, char *argv[])
 	Texture tBullet; tBullet.loadFromFile("images/fire.png"); // àòàêà
 	Texture tBot; tBot.loadFromFile("images/enemy.png"); // âðàãè
 	Texture tButton; tButton.loadFromFile("images/gui/button.png"); // êíîïêà
+	Texture thoverButton; thoverButton.loadFromFile("images/gui/hoverButton.png"); // êíîïêà ñ íàâåäåííîé ìûøêîé
 	Texture tDisCheckBox; tDisCheckBox.loadFromFile("images/gui/DisabledCheckBox.png"); // âûêëþ÷åííûé ÷åêáîêñ
 	Texture tEnCheckBox; tEnCheckBox.loadFromFile("images/gui/EnabledCheckBox.png"); // âêëþ÷åííûé ÷åêáîêñ
 
@@ -96,9 +100,14 @@ int main(int argc, char *argv[])
 	Vector2i SAVED_MOUSE_POINT;
 
 	// ìóçûêà
-	BackgroundMusic = new Music(); // óêàçàòåëü mMainMenu extern'îâñêèé
+	BackgroundMusic = new Music();
 	if (BackgroundMusic->openFromFile("sounds/menu.ogg"))
-		BackgroundMusic->play();
+		if (bSettingsMusic)
+			BackgroundMusic->play();
+		else {
+			BackgroundMusic->play();
+			BackgroundMusic->pause();
+		}
 	BackgroundMusic->setLoop(true);
 	//çâóêè
 	sf::SoundBuffer HpSBuffer;
@@ -108,30 +117,30 @@ int main(int argc, char *argv[])
 
 	// ÊÍÎÏÊÈ ÌÅÍÞØÅÊ
 	// ãëàâíîå ìåíþ
-	Button bPlay(100, 195, &tButton, ClickPlay);
-	Button bSettings(100, 275, &tButton, ClickSettings);
-	Button bGameExit(100, 355, &tButton, ClickGameExit);
+	Button bPlay(100, 195, &tButton, &thoverButton, ClickPlay);
+	Button bSettings(100, 275, &tButton, &thoverButton, ClickSettings);
+	Button bGameExit(100, 355, &tButton, &thoverButton, ClickGameExit);
 	Text tPlay(L"ÈÃÐÀÒÜ", font, 27); tPlay.setPosition(149, 202);
 	Text tSettings(L"ÍÀÑÒÐÎÉÊÈ", font, 27); tSettings.setPosition(121, 282);
 	Text tGameExit(L"ÂÛÕÎÄ", font, 27); tGameExit.setPosition(148, 362);
 	// íàñòðîéêè
-	CheckBox cbSounds(585, 205, &tEnCheckBox, &tDisCheckBox, ClickSound, true);
-	CheckBox cbMusic(585, 275, &tEnCheckBox, &tDisCheckBox, ClickMusic, true);
-	CheckBox cbFullScreen(585, 345, &tEnCheckBox, &tDisCheckBox, ClickFullScreen, true);
-	Button bSettingsExit(310, 422, &tButton, ClickSettingsExit);
+	CheckBox cbSounds(585, 205, &tEnCheckBox, &tDisCheckBox, ClickSound, bSettingsSounds);
+	CheckBox cbMusic(585, 275, &tEnCheckBox, &tDisCheckBox, ClickMusic, bSettingsMusic);
+	CheckBox cbFullScreen(585, 345, &tEnCheckBox, &tDisCheckBox, ClickFullScreen, bSettingsFullScreen);
+	Button bSettingsExit(310, 422, &tButton, &thoverButton, ClickSettingsExit);
 	Text tSound(L"ÇÂÓÊÈ", font, 50); tSound.setPosition(165, 205);
 	Text tMusic(L"ÌÓÇÛÊÀ", font, 50); tMusic.setPosition(165, 275);
 	Text tFullScreen(L"ÏÎËÍÛÉ ÝÊÐÀÍ", font, 50); tFullScreen.setPosition(165, 345);
 	Text tSettingsExit(L"ÍÀÇÀÄ", font, 27); tSettingsExit.setPosition(358, 429);
 	// ïàóçà
-	Button bContinue(310, 195, &tButton, ClickContinue);
-	Button bSaveGame(310, 275, &tButton, ClickSaveGame);
-	Button bMainMenu(310, 355, &tButton, ClickMainMenu);
+	Button bContinue(310, 195, &tButton, &thoverButton, ClickContinue);
+	Button bSaveGame(310, 275, &tButton, &thoverButton, ClickSaveGame);
+	Button bMainMenu(310, 355, &tButton, &thoverButton, ClickMainMenu);
 	Text tContinue(L"ÏÐÎÄÎËÆÈÒÜ", font, 27); tContinue.setPosition(315, 202);
 	Text tSaveGame(L"ÑÎÕÐÀÍÈÒÜ", font, 27); tSaveGame.setPosition(332, 282);
 	Text tMainMenu(L"ÃËÀÂÍÎÅ ÌÅÍÞ", font, 25); tMainMenu.setPosition(314, 361);
 	// ïðîèãðûø
-	Button bRestart(310, 195, &tButton, ClickPlay);
+	Button bRestart(310, 195, &tButton, &thoverButton, ClickPlay);
 	Text tRestart(L"ÐÅÑÒÀÐÒ", font, 27); tRestart.setPosition(352, 202);
 
 
@@ -177,12 +186,16 @@ int main(int argc, char *argv[])
 				{
 					if (event.mouseButton.button == Mouse::Button::Left)
 					{
-						bPlay.Update(MousePos);
-						bSettings.Update(MousePos);
-						bGameExit.Update(MousePos);
+						bPlay.CheckOnClick(MousePos);
+						bSettings.CheckOnClick(MousePos);
+						bGameExit.CheckOnClick(MousePos);
 					}
 				}
 			}
+
+			bPlay.Update(MousePos);
+			bSettings.Update(MousePos);
+			bGameExit.Update(MousePos);
 
 			win->clear();
 
@@ -217,9 +230,9 @@ int main(int argc, char *argv[])
 				{
 					if (event.mouseButton.button == Mouse::Button::Left)
 					{
-						bContinue.Update(MousePos);
-						bSaveGame.Update(MousePos);
-						bMainMenu.Update(MousePos);
+						bContinue.CheckOnClick(MousePos);
+						bSaveGame.CheckOnClick(MousePos);
+						bMainMenu.CheckOnClick(MousePos);
 					}
 				}
 				if (event.type == Event::KeyReleased)
@@ -232,6 +245,10 @@ int main(int argc, char *argv[])
 					}
 				}
 			}
+
+			bContinue.Update(MousePos);
+			bSaveGame.Update(MousePos);
+			bMainMenu.Update(MousePos);
 
 			win->clear();
 
@@ -267,9 +284,9 @@ int main(int argc, char *argv[])
 				{
 					if (event.mouseButton.button == Mouse::Button::Left)
 					{
-						bRestart.Update(MousePos);
-						bSaveGame.Update(MousePos);
-						bMainMenu.Update(MousePos);
+						bRestart.CheckOnClick(MousePos);
+						bSaveGame.CheckOnClick(MousePos);
+						bMainMenu.CheckOnClick(MousePos);
 					}
 				}
 				if (event.type == Event::KeyReleased)
@@ -282,6 +299,10 @@ int main(int argc, char *argv[])
 					}
 				}
 			}
+
+			bRestart.Update(MousePos);
+			bSaveGame.Update(MousePos);
+			bMainMenu.Update(MousePos);
 
 			win->clear();
 
@@ -317,7 +338,8 @@ int main(int argc, char *argv[])
 					if (event.mouseButton.button == Mouse::Button::Left)
 					{
 						// ÈÃÐÀ
-						HpSound.play();
+						if (bSettingsSounds)
+							HpSound.play();
 						if (player->Hp > 0)
 						{
 							bullets[bulIterator].Damage = 35 + rand() % 65;
@@ -403,13 +425,15 @@ int main(int argc, char *argv[])
 				{
 					if (event.mouseButton.button == Mouse::Button::Left)
 					{
-						cbMusic.Update(MousePos);
-						cbSounds.Update(MousePos);
-						cbFullScreen.Update(MousePos);
-						bSettingsExit.Update(MousePos);
+						cbMusic.CheckOnClick(MousePos);
+						cbSounds.CheckOnClick(MousePos);
+						cbFullScreen.CheckOnClick(MousePos);
+						bSettingsExit.CheckOnClick(MousePos);
 					}
 				}
 			}
+
+			bSettingsExit.Update(MousePos);
 
 			win->clear();
 
