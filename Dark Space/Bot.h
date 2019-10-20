@@ -17,7 +17,7 @@ public:
 	Bot(float x, float y, float speed, float maxHp, Texture * tBot);
 	~Bot();
 	void Update(float time);
-	void ResetBot();
+	void Reset();
 	FloatRect GetRect();
 	float frame;
 };

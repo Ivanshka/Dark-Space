@@ -17,4 +17,5 @@ public:
 	~Bullet();
 	void Update(Bot * bots, float time);
 	FloatRect GetRect();
+	void Reset();
 };

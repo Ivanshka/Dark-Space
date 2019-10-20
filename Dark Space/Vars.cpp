@@ -6,6 +6,16 @@
 // окно игры
 RenderWindow* win = nullptr;
 
+// СИСТЕМА АТАКИ
+
+// Флаг атаки
+bool IsAttacking = false;
+// Время атаки
+float AttackTime = 0;
+
+// игровой фон
+Texture tBackground;
+
 // ИГРОВЫЕ ОБЪЕКТЫ
 Player* player = nullptr;
 Bot* bots = nullptr;
@@ -26,17 +36,20 @@ sf::Sound * Sound = nullptr;
 
 // НАСТРОЙКИ
 // Параметр звука
-extern bool bSettingsSounds = true;
+bool bSettingsSounds = true;
 // Параметр музыки
-extern bool bSettingsMusic = true;
+bool bSettingsMusic = true;
 // Параметр полноэкраного режима
-extern bool bSettingsFullScreen = true;
+bool bSettingsFullScreen = true;
+
+// Уровень
+unsigned char level = 1;
 
 // Загрузка настроек
 void LoadSettings() {
 	cout << "Here must be loading of settings!\n";
 	// если существует файл настроек, загружаем их
-	if (FileIsExist("settings.txt"))
+	if (FileExist("settings.txt"))
 	{
 		ifstream in;          // поток для чтения
 		in.open("settings.txt");
@@ -58,8 +71,26 @@ void LoadSettings() {
 	}
 }
 
+// Загрузка сохранения
+void LoadSave()
+{
+	if (FileExist("save.bin"))
+	{
+		std::ifstream in("save.bin");          // поток для записи
+		in >> level;
+	}
+	else
+	{
+		std::ofstream out("save.bin");
+		out << "1";
+		level = 1;
+	}
+}
+
+// Сохранение игры
+
 // Проверка существования файла
-bool FileIsExist(std::string filePath) {
+bool FileExist(std::string filePath) {
 	bool isExist = false;
 	std::ifstream fin(filePath.c_str());
 
@@ -77,11 +108,26 @@ bool FileIsExist(std::string filePath) {
 // Начало игры
 void ClickPlay() {
 	for (int i = 0; i < BOT_COUNT; i++)
-		bots[i].ResetBot();
+	{
+		bots[i].Reset();
+		bullets[i].Reset();
+	}
 	KILLED_IN_MISSION = 0;
 	(*BackgroundMusic).openFromFile("sounds/battle.ogg");
 	if (bSettingsMusic)(*BackgroundMusic).play();
 	player->Hp = 100;
+
+	switch (level)
+	{
+	case '1': tBackground.loadFromFile("images/levels/stars.png"); break;
+	case '2': tBackground.loadFromFile("images/levels/milkyway.png"); break;
+	case '3': tBackground.loadFromFile("images/levels/orionnebula.png"); break;
+	case '4': tBackground.loadFromFile("images/levels/snailnebula.png"); break;
+	case '5': tBackground.loadFromFile("images/levels/thegiantnebulainkiel.png"); break;
+	case '6': tBackground.loadFromFile("images/levels/theomegam17nebula.png"); break;
+	case '7': tBackground.loadFromFile("images/levels/wanttoknow.png"); break;
+	}
+
 	STATE = GAME_STATE::PLAYING;
 	win->setMouseCursorVisible(false);
 }
@@ -118,13 +164,11 @@ void ClickSound() {
 
 // Полноэкранный режим
 void ClickFullScreen() {
-	bSettingsFullScreen = !bSettingsFullScreen; //cout << "Fullscreen control is in developing!\n";
+	bSettingsFullScreen = !bSettingsFullScreen;
 }
 
-// Выход из настроек
+// Выход из настроек: сохранение настроек
 void ClickSettingsExit() {
-	// тут сохраняем настройки
-	// cout << "Here must be settings saving!\n";
 	ofstream out("settings.txt");
 	out << bSettingsSounds << endl << bSettingsMusic << endl << bSettingsFullScreen;
 	out.close();
@@ -141,11 +185,15 @@ void ClickContinue() {
 
 // Сохранить
 void ClickSaveGame() {
-	cout << "Game saving is in developing!\n";
+	std::ofstream out("save.bin");
+	out << level;
+	out.close();
 }
 
 // Главное меню
 void ClickMainMenu() {
+	IsAttacking = false;
+	tBackground.loadFromFile("images/space.png");
 	(*BackgroundMusic).openFromFile("sounds/menu.ogg");
 	if (bSettingsMusic)(*BackgroundMusic).play();
 	STATE = GAME_STATE::MAIN_MENU;

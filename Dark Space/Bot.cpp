@@ -28,7 +28,7 @@ Bot::~Bot()
 void Bot::Update(float time)
 {
 	if (Y > 600)
-		ResetBot();
+		Reset();
 	else
 		sprite.setPosition(X, Y += time*Speed);
 	frame += (time * FRAME_MULTIPLIER);
@@ -37,7 +37,7 @@ void Bot::Update(float time)
 	sprite.setTextureRect(IntRect((int)(frame) * BOT_WIDTH, 0, BOT_WIDTH, BOT_HEIGHT));
 }
 
-void Bot::ResetBot()
+void Bot::Reset()
 {
 	Hp = MaxHp;
 	sprite.setPosition(X = rand() % 704, Y = -(BOT_HEIGHT + rand() % 768));

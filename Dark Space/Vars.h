@@ -22,8 +22,17 @@
 
 // Окно игры
 extern sf::RenderWindow* win;
+// игровой фон
+extern Texture tBackground;
 
-// Настройки игры
+// СИСТЕМА АТАКИ
+
+// Флаг атаки
+extern bool IsAttacking;
+// Интервал атаки
+extern float AttackTime;
+
+// НАСТРОЙКИ ИГРЫ
 
 // Параметр звука
 extern bool bSettingsSounds;
@@ -33,6 +42,11 @@ extern bool bSettingsMusic;
 extern bool bSettingsFullScreen;
 // Загрузка настроек
 void LoadSettings();
+
+// Номер уровня
+extern unsigned char level;
+// Загрузка сохранения игры
+void LoadSave();
 
 // Фоновая музыка
 extern sf::Music* BackgroundMusic;
@@ -62,7 +76,7 @@ extern Bullet* bullets;
 // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ: ФУНКЦИИ РАБОТЫ КНОПОК
 
 // Проверка на существование файла
-bool FileIsExist(string path);
+bool FileExist(string path);
 
 // ГЛАВНОЕ МЕНЮ:
 

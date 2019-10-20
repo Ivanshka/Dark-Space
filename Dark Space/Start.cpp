@@ -40,6 +40,9 @@ int main(int argc, char *argv[])
 	// зарузка настроек
 	LoadSettings();
 
+	// Загрузка игры
+	LoadSave();
+
 	if (bSettingsFullScreen)
 		win = new RenderWindow(VideoMode(800, 600), "Dark Space", Style::Fullscreen);
 	else
@@ -50,7 +53,7 @@ int main(int argc, char *argv[])
 	win->setIcon(16, 16, icon.getPixelsPtr());
 
 	// ПОДГОТОВКА
-
+	
 	// часы
 	Clock clock;
 	// инициализация генератора случайных чисел
@@ -58,7 +61,7 @@ int main(int argc, char *argv[])
 
 	// вспомогательные материалы:
 	// текстуры и спрайты:
-	Texture tBackground; tBackground.loadFromFile("images/space.png"); // фон главного меню
+	/*Texture tBackground; */tBackground.loadFromFile("images/space.png"); // фон главного меню
 	Sprite sBackground(tBackground);
 	Texture tMenu; tMenu.loadFromFile("images/menu.png"); // фон меню паузы
 	Sprite sMenu(tMenu);
@@ -333,23 +336,17 @@ int main(int argc, char *argv[])
 				{
 					win->close();
 				}
+				if (event.type == Event::MouseButtonReleased)
+					if (event.mouseButton.button == Mouse::Button::Left)
+						IsAttacking = false;
 				if (event.type == Event::MouseButtonPressed)
 				{
 					if (event.mouseButton.button == Mouse::Button::Left)
-					{
-						// ИГРА
-						if (bSettingsSounds)
-							HpSound.play();
-						if (player->Hp > 0)
-						{
-							bullets[bulIterator].Damage = 35 + rand() % 65;
-							bullets[bulIterator].sprite.setPosition(bullets[bulIterator].X = MousePos.x - 4, bullets[bulIterator].Y = MousePos.y - 70);
-							bulIterator++;
-							if (bulIterator == BULLET_COUNT)
-								bulIterator = 0;
-						}
-					}
+						IsAttacking = true;
+					if (event.mouseButton.button == Mouse::Button::Right)
+						IsAttacking = false;
 				}
+
 				if (event.type == Event::KeyReleased)
 				{
 					if (event.key.code == Keyboard::Escape)
@@ -364,7 +361,22 @@ int main(int argc, char *argv[])
 			win->clear();
 
 			// обновление
-			
+			AttackTime += elapsed;
+			if ((IsAttacking == true) && (AttackTime > 100))
+			{
+				AttackTime = 0;
+				if (bSettingsSounds)
+					HpSound.play();
+				if (player->Hp > 0)
+				{
+					bullets[bulIterator].Damage = 35 + rand() % 65;
+					bullets[bulIterator].sprite.setPosition(bullets[bulIterator].X = MousePos.x - 4, bullets[bulIterator].Y = MousePos.y - 70);
+					bulIterator++;
+					if (bulIterator == BULLET_COUNT)
+						bulIterator = 0;
+				}
+			}
+
 			if (player->Hp > 0)
 			{
 				health.setSize(Vector2f(player->Hp * 2, 30));
