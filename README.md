@@ -1,2 +1,2 @@
 # Dark-Space
-C++/SFML game
+C++/SFML 2D game about cosmos.
