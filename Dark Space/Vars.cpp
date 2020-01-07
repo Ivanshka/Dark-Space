@@ -3,6 +3,9 @@
 #include "Vars.h"
 #include <fstream>
 
+// Флаг работы игры
+bool GAMING = true;
+
 // окно игры
 RenderWindow* win = nullptr;
 

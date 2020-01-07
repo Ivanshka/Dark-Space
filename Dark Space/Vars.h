@@ -9,6 +9,9 @@
 #include "Button.h"
 #include "CheckBox.h"
 
+// Флаг работы игры
+extern bool GAMING;
+
 // Количество ботов
 #define BOT_COUNT 10
 // Высота спрайта бота

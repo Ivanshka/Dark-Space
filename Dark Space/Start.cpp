@@ -30,6 +30,7 @@ void fpsOut()
 		printf("Circle: %3i   FPS: %4i   aFPS: %4i   fFPS: %6i\n", circles, FPS, (AllFPS / circles), AllFPS);
 		out << "Circle = " << circles << "FPS = " << FPS << ", average = " << (AllFPS / circles) << ", full = " << AllFPS<< endl;
 		FPS = 0;
+		if (!GAMING) return;
 	}
 }
 
@@ -163,7 +164,7 @@ int main(int argc, char *argv[])
 	}*/
 
 	// поток для вывода fps 
-	thread thr(fpsOut);
+	thread threadFPS(fpsOut);
 
 	while (win->isOpen())
 	{
@@ -467,5 +468,10 @@ int main(int argc, char *argv[])
 			continue;
 		}
 	}
+	
+	// завершаем работу потока
+	GAMING = false;
+	threadFPS.join();
+
 	return 0;
 }
