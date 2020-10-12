@@ -1,13 +1,13 @@
 #pragma once
 
-#include <iostream>
+#include <iostream> // для дебагаа в консоли
 #include <stdio.h> // для printf
-#include <sstream>
-#include <fstream>
+#include <sstream> // 
+#include <fstream> // для записи в файл
 #include <vector>
 #include <list>
-#include <thread>
-#include <ctime>
+#include <thread> // для дебага
+#include <ctime> // для рандома
 #include <string>
 
 #include "Vars.h"
